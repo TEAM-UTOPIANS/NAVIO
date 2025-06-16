@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NAVIO - Shortest Routes Faster deliveries</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .nav-link:hover {
+            color: #3B82F6;
+            transition: color 0.3s ease;
+        }
+        .btn-primary {
+            background-color: #1E3A8A;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.375rem;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+        }
+        .btn-primary:hover {
+            background-color: #3B82F6;
+            transform: scale(1.05);
+        }
+        .btn-secondary {
+            background-color: #10B981;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.375rem;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+        }
+        .btn-secondary:hover {
+            background-color: #059669;
+            transform: scale(1.05);
+        }
+        .input-field {
+            border: 1px solid #D1D5DB;
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+            width: 100%;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .input-field:focus {
+            outline: none;
+            border-color: #3B82F6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        .fade-in {
+            animation: fadeIn 1s ease-in-out;
+        }
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <a href="/" class="flex items-center" aria-label="AVL Airlines Home">
+                <svg width="150" height="50" viewBox="0 0 200 100" class="h-12">
+                    <rect width="200" height="100" fill="none"/>
+                    <path d="M60 40 L100 30 Q120 25 140 30 L160 35 L140 45 Q120 50 100 45 L60 35 Z" fill="#1E3A8A"/>
+                    <path d="M140 35 Q160 30 180 40 L190 45 L170 55 Q150 60 130 55 L140 45 Z" fill="#3B82F6"/>
+                    <text x="10" y="70" font-family="Inter, sans-serif" font-size="20" font-weight="bold" fill="#1E3A8A">AVL Airlines</text>
+                    <text x="10" y="90" font-family="Inter, sans-serif" font-size="12" fill="#6B7280">Soar with Confidence</text>
+                </svg>
+            </a>
+            <nav class="flex items-center space-x-6">
+                {% if current_user %}
+                    <a href="/dashboard" class="text-gray-600 nav-link">Dashboard</a>
+                    <a href="/profile" class="text-gray-600 nav-link">Profile</a>
+                    <a href="/support" class="text-gray-600 nav-link">Support</a>
+                    <div class="relative group">
+                        <button class="text-gray-600 nav-link flex items-center" aria-expanded="false" aria-haspopup="true">
+                            More <i class="fas fa-chevron-down ml-1"></i>
+                        </button>
+                        <div class="absolute hidden group-hover:block bg-white shadow-lg rounded-md mt-2 py-2">
+                            <a href="/careers" class="block px-4 py-2 text-gray-600 hover:bg-gray-100">Careers</a>
+                            <a href="/offers" class="block px-4 py-2 text-gray-600 hover:bg-gray-100">Offers</a>
+                            <a href="/about" class="block px-4 py-2 text-gray-600 hover:bg-gray-100">About Us</a>
+                            <a href="/status" class="block px-4 py-2 text-gray-600 hover:bg-gray-100">Flight Status</a>
+                        </div>
+                    </div>
+                    <span class="text-gray-600">Welcome, {{ current_user }}</span>
+                    <a href="/logout" class="text-red-600 hover:underline">Logout</a>
+                {% else %}
+                    <a href="/careers" class="text-gray-600 nav-link">Careers</a>
+                    <a href="/offers" class="text-gray-600 nav-link">Offers</a>
+                    <a href="/login" class="text-blue-600 hover:underline">Login/Signup</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-4 py-8">
+        <!-- Register Section -->
+        {% if show_register %}
+        <div class="min-h-screen flex items-center justify-center">
+            <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md fade-in">
+                <svg width="200" height="100" viewBox="0 0 200 100" class="mb-6 mx-auto h-24">
+                    <rect width="200" height="100" fill="none"/>
+                    <path d="M60 40 L100 30 Q120 25 140 30 L160 35 L140 45 Q120 50 100 45 L60 35 Z" fill="#1E3A8A"/>
+                    <path d="M140 35 Q160 30 180 40 L190 45 L170 55 Q150 60 130 55 L140 45 Z" fill="#3B82F6"/>
+                    <text x="10" y="70" font-family="Inter, sans-serif" font-size="20" font-weight="bold" fill="#1E3A8A">AVL Airlines</text>
+                    <text x="10" y="90" font-family="Inter, sans-serif" font-size="12" fill="#6B7280">Soar with Confidence</text>
+                </svg>
+                <h2 class="text-2xl font-semibold text-center mb-6 text-gray-800">Create Your Account</h2>
+                <form action="/register" method="POST" class="space-y-4" onsubmit="return validateRegisterForm()">
+                    <div>
+                        <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
+                        <div class="relative">
+                            <i class="fas fa-user absolute left-3 top-3 text-gray-400"></i>
+                            <input type="text" id="username" name="username" placeholder="Enter your username" class="pl-10 input-field" required aria-describedby="username-error">
+                        </div>
+                        <p id="username-error" class="text-red-500 text-sm mt-1 hidden"></p>
+                    </div>
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                        <div class="relative">
+                            <i class="fas fa-lock absolute left-3 top-3 text-gray-400"></i>
+                            <input type="password" id="password" name="password" placeholder="Enter your password" class="pl-10 input-field" required aria-describedby="password-error">
+                        </div>
+                        <p id="password-error" class="text-red-500 text-sm mt-1 hidden">Password must be at least 8 characters, include a number and a special character.</p>
+                    </div>
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                        <div class="relative">
+                            <i class="fas fa-envelope absolute left-3 top-3 text-gray-400"></i>
+                            <input type="email" id="email" name="email" placeholder="Enter your email" class="pl-10 input-field" required aria-describedby="email-error">
+                        </div>
+                        <p id="email-error" class="text-red-500 text-sm mt-1 hidden"></p>
+                    </div>
+                    <button type="submit" class="w-full btn-secondary">Register</button>
+                    {% if register_message %}
+                    <p class="text-red-500 text-sm mt-2 text-center">{{ register_message }}</p>
+                    {% endif %}
+                    <p class="text-center mt-4 text-sm">
+                        Already a member? 
+                        <a href="/login" class="text-blue-600 hover:underline">Login</a>
+                    </p>
+                </form>
+            </div>
+        </div>
+        <script>
+            function validateRegisterForm() {
+                let valid = true;
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                const email = document.getElementById('email').value;
+
+                // Username validation
+                const usernameError = document.getElementById('username-error');
+                if (username.length < 3) {
+                    usernameError.textContent = "Username must be at least 3 characters.";
+                    usernameError.classList.remove('hidden');
+                    valid = false;
+                } else {
+                    usernameError.classList.add('hidden');
+                }
+
+                // Password validation
+                const passwordError = document.getElementById('password-error');
+                const passwordRegex = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,}$/;
+                if (!passwordRegex.test(password)) {
+                    passwordError.classList.remove('hidden');
+                    valid = false;
+                } else {
+                    passwordError.classList.add('hidden');
+                }
+
+                // Email validation
+                const emailError = document.getElementById('email-error');
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    emailError.textContent = "Please enter a valid email address.";
+                    emailError.classList.remove('hidden');
+                    valid = false;
+                } else {
+                    emailError.classList.add('hidden');
+                }
+
+                return valid;
+            }
+        </script>
+        {% endif %}
+
+        <!-- Login Section -->
+        {% if show_login %}
+        <div class="min-h-screen flex items-center justify-center">
+            <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md fade-in">
+                <svg width="200" height="100" viewBox="0 0 200 100" class="mb-6 mx-auto h-24">
+                    <rect width="200" height="100" fill="none"/>
+                    <path d="M60 40 L100 30 Q120 25 140 30 L160 35 L140 45 Q120 50 100 45 L60 35 Z" fill="#1E3A8A"/>
+                    <path d="M140 35 Q160 30 180 40 L190 45 L170 55 Q150 60 130 55 L140 45 Z" fill="#3B82F6"/>
+                    <text x="10" y="70" font-family="Inter, sans-serif" font-size="20" font-weight="bold" fill="#1E3A8A">AVL Airlines</text>
+                    <text x="10" y="90" font-family="Inter, sans-serif" font-size="12" fill="#6B7280">Soar with Confidence</text>
+                </svg>
+                <h2 class="text-2xl font-semibold text-center mb-6 text-gray-800">Sign In to Your Account</h2>
+                <form action="/login" method="POST" class="space-y-4">
+                    <div>
+                        <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
+                        <div class="relative">
+                            <i class="fas fa-user absolute left-3 top-3 text-gray-400"></i>
+                            <input type="text" id="username" name="username" placeholder="Enter your username" class="pl-10 input-field" required aria-describedby="username-error">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                        <div class="relative">
+                            <i class="fas fa-lock absolute left-3 top-3 text-gray-400"></i>
+                            <input type="password" id="password" name="password" placeholder="Enter your password" class="pl-10 input-field" required aria-describedby="password-error">
+                        </div>
+                    </div>
+                    <button type="submit" class="w-full btn-primary">Login</button>
+                    {% if login_message %}
+                    <p class="text-red-500 text-sm mt-2 text-center">{{ login_message }}</p>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Dashboard Section -->
+        {% if show_dashboard %}
+        <div class="bg-white p-8 rounded-xl shadow-lg mb-8 fade-in">
+            <h2 class="text-2xl font-semibold mb-6 text-gray-800">Your Dashboard</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                <div class="bg-blue-50 p-4 rounded-lg">
+                    <h3 class="text-lg font-medium text-blue-800">Total Bookings</h3>
+                    <p class="text-2xl font-semibold text-blue-600">{{ reservation_count }}</p>
+                </div>
+                <div class="bg-green-50 p-4 rounded-lg">
+                    <h3 class="text-lg font-medium text-green-800">Upcoming Flights</h3>
+                    <p class="text-2xl font-semibold text-green-600">{{ upcoming_flights }}</p>
+                </div>
+                <div class="bg-yellow-50 p-4 rounded-lg">
+                    <h3 class="text-lg font-medium text-yellow-800">Special Offers</h3>
+                    <p class="text-2xl font-semibold text-yellow-600">3 Available</p>
+                </div>
+            </div>
+            <div class="mt-6">
+                <h3 class="text-lg font-semibold mb-4">Recent Activity</h3>
+                {% if reservations %}
+                <div class="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                    {% for reservation in reservations[:3] %}
+                    <div class="border border-gray-200 p-6 rounded-lg bg-gray-50 hover:shadow-md transition">
+                        <p><strong>Reservation ID:</strong> {{ reservation.reservation_id }}</p>
+                        <p><strong>Flight:</strong> {{ reservation.route }}</p>
+                        <p><strong>Airline:</strong> {{ reservation.airline }}</p>
+                        <p><strong>Date:</strong> {{ reservation.Departure_date }}</p>
+                        <p><strong>Passenger:</strong> {{ reservation.passenger_name }}</p>
+                        <p><strong>Seats:</strong> {{ reservation.num_seats }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-gray-600">No recent activity. Start by booking a flight!</p>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Profile Section -->
+        {% if show_profile %}
+        <div class="bg-white p-8 rounded-xl shadow-lg fade-in">
+            <h2 class="text-2xl font-semibold mb-6 text-gray-800">Your Profile</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <p><strong>Username:</strong> {{ current_user }}</p>
+                <p><strong>Email:</strong> {{ user_email }}</p>
+                <p><strong>Total Reservations:</strong> {{ reservation_count }}</p>
+                <p><strong>Account Created:</strong> {{ account_created }}</p>
+            </div>
+            {% if reservations %}
+            <h3 class="text-lg font-semibold mb-4">Your Reservations</h3>
+            <div class="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                {% for reservation in reservations %}
+                <div class="border border-gray-200 p-6 rounded-lg bg-gray-50 hover:shadow-md transition">
+                    <p><strong>Reservation ID:</strong> {{ reservation.reservation_id }}</p>
+                    <p><strong>Flight:</strong> {{ reservation.route }}</p>
+                    <p><strong>Airline:</strong> {{ reservation.airline }}</p>
+                    <p><strong>Date:</strong> {{ reservation.Departure_date }}</p>
+                    <p><strong>Passenger:</strong> {{ reservation.passenger_name }}</p>
+                    <p><strong>Seats:</strong> {{ reservation.num_seats }}</p>
+                    <form action="/cancel" method="POST">
+                        <input type="hidden" name="reservation_id" value="{{ reservation.reservation_id }}">
+                        <button type="submit" class="mt-4 bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition">Cancel Reservation</button>
+                    </form>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="text-gray-600 mt-2">No reservations found.</p>
+            {% endif %}
+            <a href="/dashboard" class="mt-6 inline-block btn-primary">Back to Dashboard</a>
+        </div>
+        {% endif %}
+
+        <!-- Customer Support Section -->
+        {% if show_support %}
+        <div class="bg-white p-8 rounded-xl shadow-lg fade-in">
+            <h2 class="text-2xl font-semibold mb-6 text-gray-800">Customer Support</h2>
+            <p class="text-gray-600 mb-4">We’re here to assist you with your travel needs.</p>
+            <div class="space-y-2">
+                <p><strong>Phone:</strong> +1-800-AVL-HELP (853-407-5095)</p>
+                <p><strong>Email:</strong> <a href="mailto:support@avlairlines.com" class="text-blue-600 hover:underline">support@avlairlines.com</a></p>
+                <p><strong>Hours:</strong> 24/7, 365 Days a Year</p>
+                <p><strong>Live Chat:</strong> <a href="#" class="text-blue-600 hover:underline">Start Chat</a></p>
+            </div>
+            <a href="/dashboard" class="mt-6 inline-block btn-primary">Back to Dashboard</a>
+        </div>
+        {% endif %}
+
+        <!-- Flight Status Section -->
+        {% if show_status %}
+        <div class="bg-white p-8 rounded-xl shadow-lg fade-in">
+            <h2 class="text-2xl font-semibold mb-6 text-gray-800">Check Flight Status</h2>
+            <form action="/status" method="POST" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div>
+                    <label for="flight_id" class="block text-sm font-medium text-gray-700">Flight ID</label>
+                    <input type="text" id="flight_id" name="flight_id" placeholder="e.g., FL001" class="input-field" required>
+                </div>
+                <div>
+                    <label for="travel_date" class="block text-sm font-medium text-gray-700">Travel Date</label>
+                    <input type="date" id="travel_date" name="travel_date" class="input-field" min="2025-05-10" required>
+                </div>
+                <div class="flex items-end">
+                    <button type="submit" class="w-full btn-primary">Check Status</button>
+                </div>
+            </form>
+            {% if flight_status %}
+            <div class="mt-6">
+                <h3 class="text-lg font-semibold mb-4">Flight Status</h3>
+                <div class="border border-gray-200 p-6 rounded-lg bg-gray-50">
+                    <p><strong>Flight ID:</strong> {{ flight_status.flight_id }}</p>
+                    <p><strong>Route:</strong> {{ flight_status.origin }} to {{ flight_status.destination }}</p>
+                    <p><strong>Date:</strong> {{ flight_status.Departure_date }}</p>
+                    <p><strong>Time:</strong> {{ flight_status.Departure_time }}</p>
+                    <p><strong>Status:</strong> {{ flight_status.status }}</p>
+                </div>
+            </div>
+            {% elif flight_status is not none %}
+            <p class="text-red-500 text-center mt-4">Flight not found. Please check the Flight ID and date.</p>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- Main Application Content -->
+        {% if show_main %}
+        <div>
+            <!-- Top Destinations Section -->
+            <div class="my-12 fade-in">
+                <h2 class="text-2xl font-semibold mb-6 text-gray-800">Top Destinations</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Destination" class="rounded-md mb-4 w-full h-48 object-cover">
+                        <h3 class="font-semibold text-lg">Miami, FL, USA</h3>
+                        <p class="text-gray-600">Starting at $150</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1517842645767-c639042777db?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Destination" class="rounded-md mb-4 w-full h-48 object-cover">
+                        <h3 class="font-semibold text-lg">Paris, France</h3>
+                        <p class="text-gray-600">Starting at $450</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Destination" class="rounded-md mb-4 w-full h-48 object-cover">
+                        <h3 class="font-semibold text-lg">Tokyo, Japan</h3>
+                        <p class="text-gray-600">Starting at $600</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search Section -->
+            <div class="bg-white p-8 rounded-xl shadow-lg mb-8 fade-in">
+                <h2 class="text-2xl font-semibold mb-6 text-gray-800">Find Your Perfect Flight</h2>
+                <form action="/search" method="POST" class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
+                    <div>
+                        <label for="origin" class="block text-sm font-medium text-gray-700">From</label>
+                        <input type="text" id="origin" name="origin" placeholder="e.g., New York" class="input-field" required>
+                    </div>
+                    <div>
+                        <label for="destination" class="block text-sm font-medium text-gray-700">To</label>
+                        <input type="text" id="destination" name="destination" placeholder="e.g., Los Angeles" class="input-field" required>
+                    </div>
+                    <div>
+                        <label for="travel_date" class="block text-sm font-medium text-gray-700">Departure Date</label>
+                        <input type="date" id="travel_date" name="travel_date" class="input-field" min="2025-05-10" required>
+                    </div>
+                    <div>
+                        <label for="return_date" class="block text-sm font-medium text-gray-700">Return Date (Optional)</label>
+                        <input type="date" id="return_date" name="return_date" class="input-field" min="2025-05-10">
+                    </div>
+                    <div class="flex items-end">
+                        <button type="submit" class="w-full btn-primary">Search Flights</button>
+                    </div>
+                </form>
+                <!-- Search Results -->
+                {% if search_results %}
+                <div class="grid gap-6">
+                    {% if search_results.outbound %}
+                    <h3 class="text-lg font-semibold mb-4 text-gray-800">Outbound Flights</h3>
+                    <div class="flex space-x-4 mb-4">
+                        <select id="sort-outbound" class="input-field w-48" onchange="sortFlights('outbound')">
+                            <option value="price-asc">Sort by Price: Low to High</option>
+                            <option value="price-desc">Sort by Price: High to Low</option>
+                            <option value="duration-asc">Sort by Duration: Shortest</option>
+                        </select>
+                        <select id="filter-outbound" class="input-field w-48" onchange="filterFlights('outbound')">
+                            <option value="all">All Flights</option>
+                            <option value="direct">Direct Flights Only</option>
+                            <option value="seats">Seats Available</option>
+                        </select>
+                    </div>
+                    <div id="outbound-flights" class="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                        {% for flight in search_results.outbound %}
+                        <div class="flight-card border border-gray-200 p-6 rounded-lg bg-gray-50 hover:shadow-md transition" data-price="{{ flight.price }}" data-duration="{{ flight.duration }}" data-stops="{{ flight.stops }}" data-seats="{{ flight.seats_available }}">
+                            <p class="font-semibold text-blue-600">{{ flight.airline }} - Flight {{ flight.flight_id }}</p>
+                            <p><i class="fas fa-plane-departure mr-2 text-gray-500"></i><strong>From:</strong> {{ flight.origin }}</p>
+                            <p><i class="fas fa-plane-arrival mr-2 text-gray-500"></i><strong>To:</strong> {{ flight.destination }}</p>
+                            <p><i class="fas fa-calendar-alt mr-2 text-gray-500"></i><strong>Date:</strong> {{ flight.Departure_date }}</p>
+                            <p><i class="fas fa-clock mr-2 text-gray-500"></i><strong>Time:</strong> {{ flight.Departure_time }}</p>
+                            <p><i class="fas fa-hourglass-half mr-2 text-gray-500"></i><strong>Duration:</strong> {{ flight.duration // 60 }}h {{ flight.duration % 60 }}m</p>
+                            <p><i class="fas fa-map-marker-alt mr-2 text-gray-500"></i><strong>Stops:</strong> {{ 'Direct' if flight.stops == 0 else flight.stops ~ ' Stop' ~ ('s' if flight.stops > 1 else '') }}</p>
+                            <p><i class="fas fa-chair mr-2 text-gray-500"></i><strong>Seats:</strong> {{ flight.seats_available }}</p>
+                            <p><i class="fas fa-dollar-sign mr-2 text-gray-500"></i><strong>Price:</strong> ${{ flight.price }}</p>
+                            {% if current_user %}
+                            <form action="/book" method="POST">
+                                <input type="hidden" name="flight_id" value="{{ flight.flight_id }}">
+                                <button type="submit" class="mt-4 btn-secondary">Book Now</button>
+                            </form>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% if search_results.return %}
+                    <h3 class="text-lg font-semibold mb-4 mt-6 text-gray-800">Return Flights</h3>
+                    <div class="flex space-x-4 mb-4">
+                        <select id="sort-return" class="input-field w-48" onchange="sortFlights('return')">
+                            <option value="price-asc">Sort by Price: Low to High</option>
+                            <option value="price-desc">Sort by Price: High to Low</option>
+                            <option value="duration-asc">Sort by Duration: Shortest</option>
+                        </select>
+                        <select id="filter-return" class="input-field w-48" onchange="filterFlights('return')">
+                            <option value="all">All Flights</option>
+                            <option value="direct">Direct Flights Only</option>
+                            <option value="seats">Seats Available</option>
+                        </select>
+                    </div>
+                    <div id="return-flights" class="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                        {% for flight in search_results.return %}
+                        <div class="flight-card border border-gray-200 p-6 rounded-lg bg-gray-50 hover:shadow-md transition" data-price="{{ flight.price }}" data-duration="{{ flight.duration }}" data-stops="{{ flight.stops }}" data-seats="{{ flight.seats_available }}">
+                            <p class="font-semibold text-blue-600">{{ flight.airline }} - Flight {{ flight.flight_id }}</p>
+                            <p><i class="fas fa-plane-departure mr-2 text-gray-500"></i><strong>From:</strong> {{ flight.origin }}</p>
+                            <p><i class="fas fa-plane-arrival mr-2 text-gray-500"></i><strong>To:</strong> {{ flight.destination }}</p>
+                            <p><i class="fas fa-calendar-alt mr-2 text-gray-500"></i><strong>Date:</strong> {{ flight.Departure_date }}</p>
+                            <p><i class="fas fa-clock mr-2 text-gray-500"></i><strong>Time:</strong> {{ flight.Departure_time }}</p>
+                            <p><i class="fas fa-hourglass-half mr-2 text-gray-500"></i><strong>Duration:</strong> {{ flight.duration // 60 }}h {{ flight.duration % 60 }}m</p>
+                            <p><i class="fas fa-map-marker-alt mr-2 text-gray-500"></i><strong>Stops:</strong> {{ 'Direct' if flight.stops == 0 else flight.stops ~ ' Stop' ~ ('s' if flight.stops > 1 else '') }}</p>
+                            <p><i class="fas fa-chair mr-2 text-gray-500"></i><strong>Seats:</strong> {{ flight.seats_available }}</p>
+                            <p><i class="fas fa-dollar-sign mr-2 text-gray-500"></i><strong>Price:</strong> ${{ flight.price }}</p>
+                            {% if current_user %}
+                            <form action="/book" method="POST">
+                                <input type="hidden" name="flight_id" value="{{ flight.flight_id }}">
+                                <button type="submit" class="mt-4 btn-secondary">Book Now</button>
+                            </form>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% if not search_results.outbound and not search_results.return %}
+                    <p class="text-red-500 text-center">No flights found. Please adjust your search criteria.</p>
+                    {% endif %}
+                </div>
+                <script>
+                    function sortFlights(type) {
+                        const container = document.getElementById(type + '-flights');
+                        const flights = Array.from(container.getElementsByClassName('flight-card'));
+                        const sortOption = document.getElementById('sort-' + type).value;
+
+                        flights.sort((a, b) => {
+                            if (sortOption === 'price-asc') {
+                                return a.dataset.price - b.dataset.price;
+                            } else if (sortOption === 'price-desc') {
+                                return b.dataset.price - a.dataset.price;
+                            } else if (sortOption === 'duration-asc') {
+                                return a.dataset.duration - b.dataset.duration;
+                            }
+                        });
+
+                        container.innerHTML = '';
+                        flights.forEach(flight => container.appendChild(flight));
+                    }
+
+                    function filterFlights(type) {
+                        const container = document.getElementById(type + '-flights');
+                        const flights = Array.from(container.getElementsByClassName('flight-card'));
+                        const filterOption = document.getElementById('filter-' + type).value;
+
+                        flights.forEach(flight => {
+                            let show = true;
+                            if (filterOption === 'direct' && flight.dataset.stops != '0') {
+                                show = false;
+                            } else if (filterOption === 'seats' && flight.dataset.seats == '0') {
+                                show = false;
+                            }
+                            flight.style.display = show ? 'block' : 'none';
+                        });
+                    }
+                </script>
+                {% endif %}
+            </div>
+
+            <!-- Book Flight Section -->
+            {% if current_user %}
+            <div class="bg-white p-8 rounded-xl shadow-lg mb-8 fade-in">
+                <h2 class="text-2xl font-semibold mb-6 text-gray-800">Book Your Flight</h2>
+                <form action="/book" method="POST" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div>
+                        <label for="flight_id" class="block text-sm font-medium text-gray-700">Flight ID</label>
+                        <input type="text" id="flight_id" name="flight_id" placeholder="e.g., FL001" class="input-field" required>
+                    </div>
+                    <div>
+                        <label for="passenger_name" class="block text-sm font-medium text-gray-700">Passenger Name</label>
+                        <input type="text" id="passenger_name" name="passenger_name" placeholder="e.g., John Doe" class="input-field" required>
+                    </div>
+                    <div>
+                        <label for="num_seats" class="block text-sm font-medium text-gray-700">Number of Seats</label>
+                        <input type="number" id="num_seats" name="num_seats" placeholder="e.g., 1" min="1" class="input-field" required>
+                    </div>
+                    <div>
+                        <label for="special_fare" class="block text-sm font-medium text-gray-700">Special Fare</label>
+                        <select id="special_fare" name="special_fare" class="input-field">
+                            <option value="">None</option>
+                            <option value="student">Student (10% Off)</option>
+                            <option value="senior">Senior Citizen (10% Off)</option>
+                        </select>
+                    </div>
+                    <div class="md:col-span-4">
+                        <button type="submit" class="w-full btn-secondary">Book Flight</button>
+                    </div>
+                </form>
+                {% if booking_message %}
+                <p class="text-red-500 text-sm mt-4 text-center">{{ booking_message }}</p>
+                {% endif %}
+            </div>
+
+            <!-- View Reservations Section -->
+            <div class="bg-white p-8 rounded-xl shadow-lg fade-in">
+                <h2 class="text-2xl font-semibold mb-6 text-gray-800">Your Reservations</h2>
+                <a href="/reservations" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition mb-6 inline-block">View All Reservations</a>
+                {% if reservations %}
+                <div class="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                    {% for reservation in reservations %}
+                    <div class="border border-gray-200 p-6 rounded-lg bg-gray-50 hover:shadow-md transition">
+                        <p><strong>Reservation ID:</strong> {{ reservation.reservation_id }}</p>
+                        <p><strong>Flight:</strong> {{ reservation.route }}</p>
+                        <p><strong>Airline:</strong> {{ reservation.airline }}</p>
+                        <p><strong>Date:</strong> {{ reservation.Departure_date }}</p>
+                        <p><strong>Passenger:</strong> {{ reservation.passenger_name }}</p>
+                        <p><strong>Seats:</strong> {{ reservation.num_seats }}</p>
+                        <form action="/cancel" method="POST">
+                            <input type="hidden" name="reservation_id" value="{{ reservation.reservation_id }}">
+                            <button type="submit" class="mt-4 bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition">Cancel Reservation</button>
+                        </form>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <!-- Offers Section -->
+            <div class="my-12 fade-in">
+                <h2 class="text-2xl font-semibold mb-6 text-gray-800">Exclusive Offers</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Offer" class="rounded-md mb-4 w-full h-48 object-cover">
+                        <h3 class="font-semibold text-lg">10% Off for Students</h3>
+                        <p class="text-gray-600">Book now and save with our student discount.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1517842645767-c639042777db?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Offer" class="rounded-md mb-4 w-full h-48 object-cover">
+                        <h3 class="font-semibold text-lg">Free Cancellations</h3>
+                        <p class="text-gray-600">Cancel within 24 hours at no cost.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Offer" class="rounded-md mb-4 w-full h-48 object-cover">
+                        <h3 class="font-semibold text-lg">Book Now, Pay Later</h3>
+                        <p class="text-gray-600">Flexible payment plans for your convenience.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+                <h3 class="text-xl font-semibold mb-4">About AVL Airlines</h3>
+                <p class="text-gray-400">
+                    AVL Airlines connects you to over 50 destinations worldwide with a focus on safety, comfort, and affordability.
+                </p>
+            </div>
+            <div>
+                <h3 class="text-xl font-semibold mb-4">Quick Links</h3>
+                <ul class="text-gray-400 space-y-2">
+                    <li><a href="/support" class="hover:text-white">Customer Support</a></li>
+                    <li><a href="/careers" class="hover:text-white">Careers</a></li>
+                    <li><a href="/offers" class="hover:text-white">Offers</a></li>
+                    <li><a href="/about" class="hover:text-white">About Us</a></li>
+                    <li><a href="/status" class="hover:text-white">Flight Status</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="text-xl font-semibold mb-4">Contact Us</h3>
+                <ul class="text-gray-400 space-y-2">
+                    <li><i class="fas fa-phone mr-2"></i>+1-800-AVL-HELP</li>
+                    <li><i class="fas fa-envelope mr-2"></i><a href="mailto:support@avlairlines.com" class="hover:text-white">support@avlairlines.com</a></li>
+                    <li><i class="fas fa-map-marker-alt mr-2"></i>123 Skyway Blvd, Flight City, USA</li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="text-xl font-semibold mb-4">Follow Us</h3>
+                <div class="flex space-x-4 mb-4">
+                    <a href="#" class="text-gray-400 hover:text-white" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-white" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-white" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-white" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+                <h3 class="text-xl font-semibold mb-4">Popular Routes</h3>
+                <ul class="text-gray-400 space-y-2">
+                    {% for route in popular_routes %}
+                    <li><i class="fas fa-plane mr-2"></i>{{ route.origin }} to {{ route.destination }} - From ${{ route.price }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <div class="mt-8 text-center text-gray-500">
+            <p>© 2025 AVL Airlines. All rights reserved.</p>
+            <p class="mt-2">
+                <a href="#terms" class="hover:text-white">Terms & Conditions</a> |
+                <a href="#privacy" class="hover:text-white">Privacy Policy</a> |
+                <a href="#cookies" class="hover:text-white">Cookie Policy</a>
+            </p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+
+{% block title %}NAVIO - Delivery Tracking{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0">
+    <div class="row g-0">
+        <!-- Map Section -->
+        <div class="col-lg-8">
+            <div id="map" class="delivery-map"></div>
+            <div id="map-error" class="alert alert-danger" style="display: none;"></div>
+        </div>
+        
+        <!-- Delivery Details Section -->
+        <div class="col-lg-4">
+            <div class="delivery-details p-3">
+                <div class="current-delivery mb-4">
+                    <h4 class="mb-3">Current Delivery</h4>
+                    <div class="delivery-card">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="delivery-status">In Progress</span>
+                            <span class="delivery-time">ETA: 15 mins</span>
+                        </div>
+                        <div class="delivery-address">
+                            <h6>Delivery Address</h6>
+                            <p id="delivery-address">Loading...</p>
+                        </div>
+                        <div class="delivery-progress mt-3">
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" style="width: 65%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="upcoming-deliveries">
+                    <h4 class="mb-3">Upcoming Deliveries</h4>
+                    <div id="upcoming-deliveries-list">
+                        <!-- Will be populated dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .delivery-map {
+        height: calc(100vh - 56px);
+        width: 100%;
+        position: relative;
+    }
+
+    .delivery-details {
+        height: calc(100vh - 56px);
+        overflow-y: auto;
+        background-color: #f8f9fa;
+    }
+
+    .delivery-card {
+        background: white;
+        border-radius: 10px;
+        padding: 15px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .delivery-status {
+        background: #28a745;
+        color: white;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+    }
+
+    .delivery-time {
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+
+    .delivery-address {
+        margin-top: 15px;
+    }
+
+    .delivery-address h6 {
+        color: #495057;
+        margin-bottom: 5px;
+    }
+
+    .delivery-address p {
+        color: #6c757d;
+        margin-bottom: 0;
+    }
+
+    .progress {
+        height: 8px;
+        border-radius: 4px;
+    }
+
+    .progress-bar {
+        background-color: #28a745;
+    }
+
+    #map-error {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        right: 10px;
+        z-index: 1000;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Global variables
+    let map;
+    let marker;
+    const API_KEY = 'AIzaSyA6sNWP3otKrfEc5_YcCwwPVs_DaYZhKNc';
+
+    function showError(message) {
+        const errorDiv = document.getElementById('map-error');
+        errorDiv.textContent = message;
+        errorDiv.style.display = 'block';
+        console.error(message);
+    }
+
+    function initMap() {
+        try {
+            console.log('Initializing map...');
+            const mapElement = document.getElementById('map');
+            if (!mapElement) {
+                throw new Error('Map element not found');
+            }
+
+            // Create the map
+            map = new google.maps.Map(mapElement, {
+                center: { lat: 20.5937, lng: 78.9629 },
+                zoom: 13,
+                mapTypeControl: true,
+                streetViewControl: true,
+                fullscreenControl: true
+            });
+
+            console.log('Map created successfully');
+
+            // Add a marker
+            marker = new google.maps.Marker({
+                position: { lat: 20.5937, lng: 78.9629 },
+                map: map,
+                title: 'Delivery Location',
+                animation: google.maps.Animation.DROP
+            });
+
+            console.log('Marker added successfully');
+
+            // Add click listener to the map
+            map.addListener('click', function(event) {
+                // Update marker position
+                marker.setPosition(event.latLng);
+                
+                // Get address from coordinates
+                const geocoder = new google.maps.Geocoder();
+                geocoder.geocode({ 'location': event.latLng }, function(results, status) {
+                    if (status === 'OK') {
+                        if (results[0]) {
+                            document.getElementById('delivery-address').textContent = results[0].formatted_address;
+                        }
+                    } else {
+                        showError('Geocoding failed: ' + status);
+                    }
+                });
+            });
+
+            console.log('Map initialization completed successfully');
+        } catch (error) {
+            showError('Error initializing map: ' + error.message);
+        }
+    }
+
+    // Handle any errors in loading the Google Maps API
+    window.gm_authFailure = function() {
+        showError('Google Maps authentication failed. Please check the API key.');
+    };
+
+    // Load Google Maps API
+    function loadGoogleMapsAPI() {
+        return new Promise((resolve, reject) => {
+            const script = document.createElement('script');
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${API_KEY}&libraries=places&callback=initMap`;
+            script.async = true;
+            script.defer = true;
+            script.onerror = () => reject(new Error('Failed to load Google Maps API'));
+            script.onload = resolve;
+            document.head.appendChild(script);
+        });
+    }
+
+    // Initialize the map when the page is ready
+    document.addEventListener('DOMContentLoaded', function() {
+        loadGoogleMapsAPI().catch(error => {
+            showError('Failed to load Google Maps: ' + error.message);
+        });
+    });
+</script>
+{% endblock %} 

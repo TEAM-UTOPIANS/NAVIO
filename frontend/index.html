@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block title %}NAVIO - Intelligent Route Optimization{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="row align-items-center min-vh-75 py-5">
+    <div class="col-lg-6">
+        <h1 class="display-4 fw-bold mb-4 text-gradient">Welcome to NAVIO</h1>
+        <p class="lead mb-4">Transform your delivery operations with intelligent route optimization. Our advanced algorithms ensure efficient, cost-effective, and timely deliveries for your business.</p>
+        <div class="d-grid gap-3 d-sm-flex">
+            <a href="/register-form" class="btn btn-primary btn-lg px-4">
+                <i class="fas fa-user-plus"></i> Get Started
+            </a>
+            <a href="/login" class="btn btn-outline-primary btn-lg px-4">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </a>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <img src="https://cdn-icons-png.flaticon.com/512/1925/1925081.png" alt="Route Optimization" class="img-fluid hero-image">
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="row mt-5 g-4">
+    <div class="col-md-4">
+        <div class="card h-100 feature-card">
+            <div class="card-body text-center p-4">
+                <div class="feature-icon mb-3">
+                    <img src="https://cdn-icons-png.flaticon.com/512/1925/1925081.png" alt="Intelligent Routing" class="feature-image">
+                </div>
+                <h3 class="card-title h4">Intelligent Routing</h3>
+                <p class="card-text">Advanced algorithms optimize delivery routes in real-time, reducing fuel costs and delivery times.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 feature-card">
+            <div class="card-body text-center p-4">
+                <div class="feature-icon mb-3">
+                    <img src="https://cdn-icons-png.flaticon.com/512/1925/1925081.png" alt="Real-time Tracking" class="feature-image">
+                </div>
+                <h3 class="card-title h4">Real-time Tracking</h3>
+                <p class="card-text">Monitor deliveries in real-time with our advanced tracking system and predictive analytics.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 feature-card">
+            <div class="card-body text-center p-4">
+                <div class="feature-icon mb-3">
+                    <img src="https://cdn-icons-png.flaticon.com/512/1925/1925081.png" alt="Performance Analytics" class="feature-image">
+                </div>
+                <h3 class="card-title h4">Performance Analytics</h3>
+                <p class="card-text">Gain insights into delivery performance and optimize operations with detailed analytics.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Benefits Section -->
+<div class="row mt-5 py-5 bg-light rounded-3">
+    <div class="col-12 text-center mb-4">
+        <h2 class="display-5 fw-bold">Why Choose NAVIO?</h2>
+        <p class="lead">Experience the future of delivery optimization</p>
+    </div>
+    <div class="col-md-3">
+        <div class="text-center">
+            <i class="fas fa-gas-pump fa-2x text-primary mb-3"></i>
+            <h4>Fuel Savings</h4>
+            <p>Reduce fuel costs by up to 20%</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="text-center">
+            <i class="fas fa-clock fa-2x text-primary mb-3"></i>
+            <h4>Time Efficiency</h4>
+            <p>Save up to 30% delivery time</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="text-center">
+            <i class="fas fa-smile fa-2x text-primary mb-3"></i>
+            <h4>Customer Satisfaction</h4>
+            <p>Improve delivery reliability</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="text-center">
+            <i class="fas fa-chart-pie fa-2x text-primary mb-3"></i>
+            <h4>ROI</h4>
+            <p>Quick return on investment</p>
+        </div>
+    </div>
+</div>
+
+<!-- CTA Section -->
+<div class="row mt-5 text-center">
+    <div class="col-12">
+        <h2 class="display-5 fw-bold mb-4">Ready to Optimize Your Deliveries?</h2>
+        <p class="lead mb-4">Join NAVIO today and transform your delivery operations</p>
+        <a href="/register-form" class="btn btn-primary btn-lg px-5">
+            <i class="fas fa-rocket"></i> Get Started Now
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .text-gradient {
+        background: linear-gradient(90deg, var(--navio-primary), var(--navio-secondary));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    
+    .feature-card {
+        transition: all 0.3s ease;
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-10px);
+    }
+    
+    .feature-icon {
+        height: 120px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .feature-image {
+        width: 80px;
+        height: 80px;
+        object-fit: contain;
+    }
+    
+    .hero-image {
+        max-width: 100%;
+        height: auto;
+        animation: float 6s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+        0% {
+            transform: translateY(0px);
+        }
+        50% {
+            transform: translateY(-20px);
+        }
+        100% {
+            transform: translateY(0px);
+        }
+    }
+    
+    .bg-light {
+        background-color: var(--navio-light) !important;
+    }
+</style>
+{% endblock %} 
