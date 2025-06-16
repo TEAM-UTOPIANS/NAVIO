@@ -1,22 +1,28 @@
-# Navio - Route Optimization Platform
-
-## Overview
+Navio - Route Optimization Platform
+🌐 Live Demo
+🔗 Visit: https://navio.onrender.com
 
 Navio is a comprehensive route optimization platform that helps businesses and individuals optimize their delivery routes for maximum efficiency. The platform combines advanced algorithms with a user-friendly interface to provide intelligent route planning solutions.
 
-## Features
+Features
+User Authentication: Secure registration and login system with JWT tokens
 
-- **User Authentication**: Secure registration and login system with JWT tokens
-- **Route Management**: Create, view, update, and delete delivery routes
-- **Route Optimization**: Advanced algorithms including Dijkstra, A*, and Floyd-Warshall
-- **Real-time Maps Integration**: Google Maps API integration for accurate geocoding and directions
-- **Multi-algorithm Support**: Choose from different optimization algorithms based on your needs
-- **Round-trip Optimization**: Support for both one-way and round-trip route planning
-- **Customizable Preferences**: Set delivery priorities and time constraints
+Route Management: Create, view, update, and delete delivery routes
 
-## Project Structure
+Route Optimization: Advanced algorithms including Dijkstra, A*, and Floyd-Warshall
 
-```
+Real-time Maps Integration: Google Maps API integration for accurate geocoding and directions
+
+Multi-algorithm Support: Choose from different optimization algorithms based on your needs
+
+Round-trip Optimization: Support for both one-way and round-trip route planning
+
+Customizable Preferences: Set delivery priorities and time constraints
+
+Project Structure
+bash
+Copy
+Edit
 /project
 ├── backend/                 # Flask backend application
 │   ├── app.py              # Main Flask application
@@ -26,156 +32,179 @@ Navio is a comprehensive route optimization platform that helps businesses and i
 │   └── routes/             # Additional route handlers
 ├── frontend/               # Frontend application
 ├── requirements.txt        # Python dependencies
-└── README.md              # This file
-```
+└── README.md               # This file
+Technology Stack
+Backend
+Flask: Web framework for building the API
 
-## Technology Stack
+SQLAlchemy: Database ORM
 
-### Backend
-- **Flask**: Web framework for building the API
-- **SQLAlchemy**: Database ORM
-- **JWT**: Authentication and authorization
-- **Flask-CORS**: Cross-origin resource sharing
-- **Google Maps API**: Geocoding and directions
+JWT: Authentication and authorization
 
-### Frontend
-- HTML, CSS, JavaScript
-- Responsive design for mobile and desktop
+Flask-CORS: Cross-origin resource sharing
 
-## Installation
+Google Maps API: Geocoding and directions
 
-### Prerequisites
-- Python 3.7+
-- pip package manager
+Frontend
+HTML, CSS, JavaScript
 
-### Setup Instructions
+Responsive design for mobile and desktop
 
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd Navio
-   ```
+Installation
+Prerequisites
+Python 3.7+
 
-2. **Create and activate virtual environment**
-   ```bash
-   python -m venv venv
-   # On Windows
-   venv\Scripts\activate
-   # On macOS/Linux
-   source venv/bin/activate
-   ```
+pip package manager
 
-3. **Install dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
+Setup Instructions
+Clone the repository
 
-4. **Set up environment variables**
-   Create a `.env` file in the root directory with the following variables:
-   ```
-   SECRET_KEY=your_secret_key_here
-   SQLALCHEMY_DATABASE_URI=sqlite:///navio.db
-   GOOGLE_MAPS_API_KEY=your_google_maps_api_key
-   ```
+bash
+Copy
+Edit
+git clone <repository-url>
+cd Navio
+Create and activate virtual environment
 
-5. **Run the application**
-   ```bash
-   cd backend
-   python app.py
-   ```
+bash
+Copy
+Edit
+python -m venv venv
+# On Windows
+venv\Scripts\activate
+# On macOS/Linux
+source venv/bin/activate
+Install dependencies
 
-6. **Access the application**
-   Open your browser and navigate to `http://localhost:5000`
+bash
+Copy
+Edit
+pip install -r requirements.txt
+Set up environment variables
+Create a .env file in the root directory with the following variables:
 
-## API Endpoints
+ini
+Copy
+Edit
+SECRET_KEY=your_secret_key_here
+SQLALCHEMY_DATABASE_URI=sqlite:///navio.db
+GOOGLE_MAPS_API_KEY=your_google_maps_api_key
+Run the application
 
-### Authentication
-- `POST /api/register` - User registration
-- `POST /api/login` - User login
-
-### Routes Management
-- `GET /api/routes` - Get all routes for authenticated user
-- `POST /api/routes` - Create a new route
-- `GET /api/routes/<id>` - Get specific route
-- `PUT /api/routes/<id>` - Update route
-- `DELETE /api/routes/<id>` - Delete route
-
-### Route Optimization
-- `POST /api/optimize/route` - Optimize delivery route
-
-### System
-- `GET /api/health` - Health check endpoint
-- `GET /api/config/maps-key` - Get Google Maps API key
-
-## Route Optimization Algorithms
-
-The platform supports multiple optimization algorithms:
-
-1. **Dijkstra's Algorithm**: Finds shortest path between nodes
-2. **A* Algorithm**: Informed search algorithm with heuristics
-3. **Floyd-Warshall**: All-pairs shortest path algorithm
-
-## Usage
-
-1. **Register/Login**: Create an account or log in to access the platform
-2. **Create Routes**: Add delivery locations and set preferences
-3. **Optimize Routes**: Choose an algorithm and optimize your route
-4. **View Results**: See optimized routes with distance and time estimates
-5. **Manage Routes**: Edit, delete, or duplicate existing routes
-
-## Configuration
-
-### Environment Variables
-- `SECRET_KEY`: Secret key for JWT token generation
-- `SQLALCHEMY_DATABASE_URI`: Database connection string
-- `GOOGLE_MAPS_API_KEY`: Google Maps API key for geocoding and directions
-
-### Database
-The application uses SQLite by default. For production, consider using PostgreSQL or MySQL.
-
-## Deployment
-
-### Local Development
-```bash
+bash
+Copy
+Edit
 cd backend
 python app.py
-```
+Access the application
+Open your browser and navigate to http://localhost:5000
+Or try the hosted version: https://navio.onrender.com
 
-### Production Deployment
-For production deployment, consider using:
-- **Gunicorn**: WSGI server
-- **Nginx**: Reverse proxy
-- **PostgreSQL**: Production database
-- **Docker**: Containerization
+API Endpoints
+Authentication
+POST /api/register - User registration
 
-## Troubleshooting
+POST /api/login - User login
 
-### Common Issues
+Routes Management
+GET /api/routes - Get all routes for authenticated user
 
-1. **Module Import Errors**: Ensure all dependencies are installed
-2. **Database Errors**: Check database URI and permissions
-3. **Maps API Errors**: Verify Google Maps API key is valid
-4. **CORS Issues**: Check CORS configuration for frontend integration
+POST /api/routes - Create a new route
 
-### File Path Issues
-If you encounter the error `python: can't open file '/opt/render/project/src/app.py'`, this indicates a deployment configuration mismatch. The application expects the file structure to match your deployment platform's requirements.
+GET /api/routes/<id> - Get specific route
 
-## Contributing
+PUT /api/routes/<id> - Update route
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
+DELETE /api/routes/<id> - Delete route
 
-## License
+Route Optimization
+POST /api/optimize/route - Optimize delivery route
 
+System
+GET /api/health - Health check endpoint
+
+GET /api/config/maps-key - Get Google Maps API key
+
+Route Optimization Algorithms
+The platform supports multiple optimization algorithms:
+
+Dijkstra's Algorithm: Finds shortest path between nodes
+
+A* Algorithm: Informed search algorithm with heuristics
+
+Floyd-Warshall: All-pairs shortest path algorithm
+
+Usage
+Register/Login: Create an account or log in to access the platform
+
+Create Routes: Add delivery locations and set preferences
+
+Optimize Routes: Choose an algorithm and optimize your route
+
+View Results: See optimized routes with distance and time estimates
+
+Manage Routes: Edit, delete, or duplicate existing routes
+
+Configuration
+Environment Variables
+SECRET_KEY: Secret key for JWT token generation
+
+SQLALCHEMY_DATABASE_URI: Database connection string
+
+GOOGLE_MAPS_API_KEY: Google Maps API key for geocoding and directions
+
+Database
+The application uses SQLite by default. For production, consider using PostgreSQL or MySQL.
+
+Deployment
+Local Development
+bash
+Copy
+Edit
+cd backend
+python app.py
+Production Deployment
+Deployed live on Render: https://navio.onrender.com
+
+For advanced production setups, consider using:
+
+Gunicorn: WSGI server
+
+Nginx: Reverse proxy
+
+PostgreSQL: Production database
+
+Docker: Containerization
+
+Troubleshooting
+Common Issues
+Module Import Errors: Ensure all dependencies are installed
+
+Database Errors: Check database URI and permissions
+
+Maps API Errors: Verify Google Maps API key is valid
+
+CORS Issues: Check CORS configuration for frontend integration
+
+File Path Issues
+If you encounter the error python: can't open file '/opt/render/project/src/app.py', this indicates a deployment configuration mismatch. The application expects the file structure to match your deployment platform's requirements.
+
+Contributing
+Fork the repository
+
+Create a feature branch
+
+Make your changes
+
+Test thoroughly
+
+Submit a pull request
+
+License
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-## Support
-
+Support
 For support and questions, please contact the development team or create an issue in the repository.
 
----
-
-**Navio** - Optimizing routes, one delivery at a time. 🚚✨
+Navio – Optimizing routes, one delivery at a time. 🚚✨
+🔗 Live Project Link
